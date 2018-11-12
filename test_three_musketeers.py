@@ -41,27 +41,37 @@ def test_string_to_location():
     #test with correct inputs
 
 def test_location_to_string():
-    # Replace with tests
+    assert location_to_string((0,0)) == 'A1'
+    assert location_to_string((1,1)) == 'B2'
+    assert location_to_string((4,0)) == 'E1'
+    assert location_to_string((0,4)) == 'A5'
 
 def test_at():
+    pass
     # Replace with tests
 
 def test_all_locations():
+    pass
     # Replace with tests
 
 def test_adjacent_location():
+    pass
     # Replace with tests
     
 def test_is_legal_move_by_musketeer():
+    pass
     # Replace with tests
     
 def test_is_legal_move_by_enemy():
+    pass
     # Replace with tests
 
 def test_is_legal_move():
+    pass
     # Replace with tests
 
 def test_can_move_piece_at():
+    pass
     # Replace with tests
 
 def test_has_some_legal_move_somewhere():
@@ -72,24 +82,31 @@ def test_has_some_legal_move_somewhere():
     # with at least one additional board
 
 def test_possible_moves_from():
+    pass
     # Replace with tests
 
 def test_is_legal_location():
+    pass
     # Replace with tests
 
 def test_is_within_board():
+    pass
     # Replace with tests
 
 def test_all_possible_moves_for():
+    pass
     # Replace with tests
     
 def test_make_move():
+    pass
     # Replace with tests
     
 def test_choose_computer_move():
+    pass
     # Replace with tests; should work for both 'M' and 'R'
 
 def test_is_enemy_win():
+    pass
     # Replace with tests
 
 

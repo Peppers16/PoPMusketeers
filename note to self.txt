@@ -1,0 +1,15 @@
+#Now you can work on your files as you normally work on git. Every 20/30 minutes as you do changes, run
+
+git add .
+
+git commit -m “explain what you did”
+
+#to store the snapshots of your work. Every 1 or 2 hours you should run
+
+git push
+
+#to upload your changes to GitHub
+
+#It is convenient to use GitHub to sync your work between several machines. If you, for example, want to sync your project also with your laptop, you can repeat steps 1 – 8 above on your laptop. However, you’ll also need to execute the command
+
+git pull
