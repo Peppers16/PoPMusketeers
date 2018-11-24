@@ -87,7 +87,6 @@ def is_legal_move(location, direction):
 
 def can_move_piece_at(location):
     """Tests whether the player at the location has at least one move available.
-    You can assume that input will always be in correct range.
     You can assume that input will always be in correct range."""
     pass # Replace with code
 
