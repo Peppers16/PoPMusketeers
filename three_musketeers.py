@@ -148,7 +148,7 @@ def print_board():
     print("  ---------------")
     ch = "A"
     for i in range(0, 5):
-        print(ch, "|", end = " ")
+        print(ch, "|", end=" ")
         for j in range(0, 5):
             print(board[i][j] + " ", end = " ")
         print()
