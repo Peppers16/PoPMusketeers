@@ -64,7 +64,7 @@ def test_at():
 def test_all_locations():
     assert all_locations()[0] == (0, 0)
     assert all_locations()[5] == (1, 0)
-    assert all_lcoations()[24] == (4, 4)
+    assert all_locations()[24] == (4, 4)
 
 
 def test_adjacent_location():

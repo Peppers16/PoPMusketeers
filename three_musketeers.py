@@ -12,6 +12,8 @@
 # For brevity, Cardinal Richleau's men are referred to as "enemy".
 # 'pass' is a no-nothing Python statement. Replace it with actual code.
 
+row_to_num = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4}
+num_to_row = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E'}
 
 def create_board():
     global board
@@ -46,7 +48,14 @@ def string_to_location(s):
        is outside of the correct range (between 'A' and 'E' for s[0] and
        between '1' and '5' for s[1]
        """
-    return (0, 0)
+    try:
+        row = row_to_num[s[0].upper()]
+    except KeyError:
+        raise ValueError(s[0].upper(), 'is not a valid row. Please give a letter between A and E')
+    col = int(s[1]) - 1
+    if row not in list(range(0, 5)) or col not in list(range(0, 5)):
+        raise ValueError("Location not on board. Please input a location between 'A1' and 'E5'")
+    return (row, col)
 
 
 def location_to_string(location):
@@ -54,7 +63,10 @@ def location_to_string(location):
     Similarly to the previous function, this function should raise
     ValueError exception if the input is outside of the correct range
     """
-    return 'stub'
+    if location[0] not in list(range(0, 5)) or location[1] not in list(range(0, 5)):
+        raise ValueError('Location not on board. \n \
+            Column and Row must both be integers from 0 to 4')
+    return num_to_row[location[0]] + str(location[1] + 1)
 
 
 def at(location):
@@ -65,7 +77,11 @@ def at(location):
 
 def all_locations():
     """Returns a list of all 25 locations on the board."""
-    return []
+    locations = []
+    for i in range(0, 5):
+        for j in range(0, 5):
+            locations.append((i,j))
+    return locations
 
 
 def adjacent_location(location, direction):
