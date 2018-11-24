@@ -80,7 +80,7 @@ def all_locations():
     locations = []
     for i in range(0, 5):
         for j in range(0, 5):
-            locations.append((i,j))
+            locations.append((i, j))
     return locations
 
 
@@ -89,14 +89,30 @@ def adjacent_location(location, direction):
        Does not check if the location returned is legal on a 5x5 board.
        You can assume that input will always be in correct range."""
     (row, column) = location
-    return (0, 0)
+    direction = direction.lower()
+    if direction not in ['up', 'down', 'left', 'right']:
+        raise ValueError('Direction must be one of: "up","down","left","right"')
+    if direction == 'up':
+        return (row - 1, column)
+    elif direction == 'down':
+        return (row + 1, column)
+    elif direction == 'left':
+        return (row, column - 1)
+    elif direction == 'right':
+        return (row, column + 1)
 
 
 def is_legal_move_by_musketeer(location, direction):
     """Tests if the Musketeer at the location can move in the direction.
     You can assume that input will always be in correct range. Raises
     ValueError exception if at(location) is not 'M'"""
-    return False
+    if at(location) != 'M':
+        raise ValueError('Given location does not contain a Musketeer')
+    moving_to = adjacent_location(location, direction)
+    if at(moving_to) == 'R' and is_legal_location(moving_to):
+        return True
+    else:
+        return False
 
 
 def is_legal_move_by_enemy(location, direction):
@@ -138,7 +154,11 @@ def possible_moves_from(location):
 def is_legal_location(location):
     """Tests if the location is legal on a 5x5 board.
     You can assume that input will always be a pair of integers."""
-    return False
+    row, col = location
+    if row in list(range(0, 5)) and col in list(range(0, 5)):
+        return True
+    else:
+        return False
 
 
 def is_within_board(location, direction):
