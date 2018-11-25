@@ -7,7 +7,7 @@ up = 'up'
 down = 'down'
 M = 'M'
 R = 'R'
-_ = '-'
+_ = '_'
 
 board1 = [[_, _, _, M, _],
           [_, _, R, M, _],
@@ -108,7 +108,8 @@ def test_has_some_legal_move_somewhere():
 
 def test_possible_moves_from():
     set_board(board1)
-    assert possible_moves_from((0, 3)) == ['left', 'right']
+    assert possible_moves_from((2, 2)) == ['up','left', 'right']
+    assert possible_moves_from((0, 3)) == []
 
 
 def test_is_legal_location():
