@@ -145,12 +145,12 @@ def test_choose_computer_move():
     set_board(board1)
     choice = choose_computer_move(M)
     assert is_legal_location(choice[0])
-    assert is_legal_move(choice)
+    assert is_legal_move(*choice)
     # Check for enemy players
     set_board(board1)
     choice = choose_computer_move(R)
     assert is_legal_location(choice[0])
-    assert is_legal_move(choice)
+    assert is_legal_move(*choice)
 
 
 def test_is_enemy_win():

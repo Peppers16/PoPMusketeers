@@ -12,6 +12,8 @@
 # For brevity, Cardinal Richleau's men are referred to as "enemy".
 # 'pass' is a no-nothing Python statement. Replace it with actual code.
 
+from random import choice
+
 row_to_num = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4}
 num_to_row = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E'}
 
@@ -109,7 +111,7 @@ def is_legal_move_by_musketeer(location, direction):
     if at(location) != 'M':
         raise ValueError('Given location does not contain a Musketeer')
     moving_to = adjacent_location(location, direction)
-    if at(moving_to) == 'R' and is_legal_location(moving_to):
+    if is_legal_location(moving_to) and at(moving_to) == 'R':  # move legality should be checked before contents
         return True
     else:
         return False
@@ -122,7 +124,7 @@ def is_legal_move_by_enemy(location, direction):
     if at(location) != 'R':
         raise ValueError('Given location does not contain an Enemy')
     moving_to = adjacent_location(location, direction)
-    if at(moving_to) == '_' and is_legal_location(moving_to):
+    if is_legal_location(moving_to) and at(moving_to) == '_':  # move legality should be checked before contents
         return True
     else:
         return False
@@ -206,7 +208,15 @@ def make_move(location, direction):
     """Moves the piece in location in the indicated direction.
     Doesn't check if the move is legal. You can assume that input will always
     be in correct range."""
-    pass  # Replace with code
+    moving_to = adjacent_location(location, direction)
+    if at(location) == 'M':
+        board[moving_to[0]][moving_to[1]] = 'M'
+        board[location[0]][location[1]] = '_'
+    elif at(location) == 'R':
+        board[moving_to[0]][moving_to[1]] = 'R'
+        board[location[0]][location[1]] = '_'
+    else:
+        raise ValueError("Given Location did not contain a piece")
 
 
 def choose_computer_move(who):
@@ -214,7 +224,8 @@ def choose_computer_move(who):
        enemy (who = 'R') and returns it as the tuple (location, direction),
        where a location is a (row, column) tuple as usual.
        You can assume that input will always be in correct range."""
-    return ((0, 0), 'right')
+    # First implementation simply picks a random, legal move
+    return choice(all_possible_moves_for(who))
 
 
 def is_enemy_win():
