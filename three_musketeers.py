@@ -184,6 +184,7 @@ def possible_moves_from(location):
 def is_legal_location(location):
     """Tests if the location is legal on a 5x5 board.
     You can assume that input will always be a pair of integers."""
+    # possible refactor: is location in all_locations()
     row, col = location
     if row in list(range(0, 5)) and col in list(range(0, 5)):
         return True

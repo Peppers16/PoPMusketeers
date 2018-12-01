@@ -15,6 +15,12 @@ board1 = [[_, _, _, M, _],
           [_, R, _, _, _],
           [_, _, _, R, _]]
 
+board2 = [[_, _, _, R, _],
+          [_, _, _, _, _],
+          [M, _, M, _, M],
+          [_, _, _, R, _],
+          [_, _, _, _, _]]
+
 set_board(board1)
 
 
@@ -22,7 +28,11 @@ def test_create_board():
     create_board()
     assert at((0, 0)) == R
     assert at((0, 4)) == M
-    # eventually add at least two more test cases
+    for i, location in enumerate(all_locations()):
+        if i in [4, 12, 20]:
+            assert at(location) == M
+        else:
+            assert at(location) == R
 
 
 def test_set_board():
@@ -30,21 +40,32 @@ def test_set_board():
     assert at((0, 0)) == _
     assert at((1, 2)) == R
     assert at((1, 3)) == M
-    # eventually add some board2 and at least 3 tests with it
+    set_board(board2)
+    assert at((0, 3)) == R
+    assert at((2, 0)) == M
+    assert at((2, 2)) == M
+    assert at((2, 4)) == M
 
 
 def test_get_board():
     set_board(board1)
     assert board1 == get_board()
-    # eventually add at least one more test with another board
+    set_board(board2)
+    assert board2 == get_board()
 
 
 def test_string_to_location():
     with pytest.raises(ValueError):
         string_to_location('X3')
     assert string_to_location('A1') == (0, 0)
-    # eventually add at least one more exception test and two more
-    # test with correct inputs
+    with pytest.raises(ValueError):
+        string_to_location('A6')
+    with pytest.raises(ValueError):
+        string_to_location('A12')
+    with pytest.raises(ValueError):
+        string_to_location('B22')
+    assert string_to_location('E5') == (4, 4)
+    assert string_to_location('B2') == (1, 1)
 
 
 def test_location_to_string():
@@ -52,6 +73,8 @@ def test_location_to_string():
     assert location_to_string((1, 1)) == 'B2'
     assert location_to_string((4, 0)) == 'E1'
     assert location_to_string((0, 4)) == 'A5'
+    assert location_to_string((4, 4)) == 'E5'
+    assert location_to_string((1, 1)) == 'B2'
 
 
 def test_at():
@@ -59,12 +82,15 @@ def test_at():
     assert at((0, 0)) == _
     assert at((0, 3)) == M
     assert at((1, 2)) == R
+    assert at((4, 1)) == _
+    assert at((4, 3)) == R
 
 
 def test_all_locations():
     assert all_locations()[0] == (0, 0)
     assert all_locations()[5] == (1, 0)
     assert all_locations()[24] == (4, 4)
+    assert len(all_locations()) == 25
 
 
 def test_adjacent_location():
