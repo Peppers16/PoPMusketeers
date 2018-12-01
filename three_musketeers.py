@@ -14,6 +14,7 @@
 
 from random import choice
 
+# lookups for row in string_to_location and location_to_string functions
 row_to_num = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4}
 num_to_row = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E'}
 
@@ -50,13 +51,15 @@ def string_to_location(s):
        is outside of the correct range (between 'A' and 'E' for s[0] and
        between '1' and '5' for s[1]
        """
+    # Supplied row (first character: letter) and column (second character: number) are checked separately.
+    # This is because of how row uses a dictionary lookup
     try:
         row = row_to_num[s[0].upper()]
     except KeyError:
         raise ValueError(s[0].upper(), 'is not a valid row. Please give a letter between A and E')
     col = int(s[1]) - 1
-    if row not in list(range(0, 5)) or col not in list(range(0, 5)):
-        raise ValueError("Location not on board. Please input a location between 'A1' and 'E5'")
+    if col not in list(range(0, 5)):
+        raise ValueError(s[1], 'is not a valid column. Please give a number between 1 and 5')
     return (row, col)
 
 
@@ -65,7 +68,7 @@ def location_to_string(location):
     Similarly to the previous function, this function should raise
     ValueError exception if the input is outside of the correct range
     """
-    if location[0] not in list(range(0, 5)) or location[1] not in list(range(0, 5)):
+    if not is_legal_location(location):
         raise ValueError('Location not on board. \n \
             Column and Row must both be integers from 0 to 4')
     return num_to_row[location[0]] + str(location[1] + 1)
@@ -90,7 +93,7 @@ def adjacent_location(location, direction):
     """Return the location next to the given one, in the given direction.
        Does not check if the location returned is legal on a 5x5 board.
        You can assume that input will always be in correct range."""
-    (row, column) = location
+    row, column = location
     direction = direction.lower()
     if direction not in ['up', 'down', 'left', 'right']:
         raise ValueError('Direction must be one of: "up","down","left","right"')
@@ -111,7 +114,8 @@ def is_legal_move_by_musketeer(location, direction):
     if at(location) != 'M':
         raise ValueError('Given location does not contain a Musketeer')
     moving_to = adjacent_location(location, direction)
-    if is_legal_location(moving_to) and at(moving_to) == 'R':  # move legality should be checked before contents
+    # check move legality, THEN contents of destination (otherwise at() will error)
+    if is_legal_location(moving_to) and at(moving_to) == 'R':
         return True
     else:
         return False
@@ -124,7 +128,8 @@ def is_legal_move_by_enemy(location, direction):
     if at(location) != 'R':
         raise ValueError('Given location does not contain an Enemy')
     moving_to = adjacent_location(location, direction)
-    if is_legal_location(moving_to) and at(moving_to) == '_':  # move legality should be checked before contents
+    # check move legality, THEN contents of destination (otherwise at() will error)
+    if is_legal_location(moving_to) and at(moving_to) == '_':
         return True
     else:
         return False
@@ -140,13 +145,13 @@ def is_legal_move(location, direction):
     elif player == 'R':
         return is_legal_move_by_enemy(location, direction)
     else:
-        raise ValueError('Given location did not contain a Musketeer or an Enemy')
+        raise ValueError('Given location does not contain a Musketeer or an Enemy')
 
 
 def can_move_piece_at(location):
     """Tests whether the player at the location has at least one move available.
     You can assume that input will always be in correct range."""
-    for direction in ['up','down','left','right']:
+    for direction in ['up', 'down', 'left', 'right']:
         if is_legal_move(location, direction):
             return True
     return False
@@ -170,7 +175,7 @@ def possible_moves_from(location):
        location, returns the empty list, [].
        You can assume that input will always be in correct range."""
     possible_moves = []
-    for direction in ['up','down','left','right']:
+    for direction in ['up', 'down', 'left', 'right']:
         if is_legal_move(location, direction):
             possible_moves.append(direction)
     return possible_moves
@@ -200,7 +205,8 @@ def all_possible_moves_for(player):
     possible_moves = []
     for location in all_locations():
         if at(location) == player:
-            possible_moves = possible_moves + [(location,direction) for direction in possible_moves_from(location)]
+            # list comprehension returns list of tuples containing piece's location with each direction it can move
+            possible_moves = possible_moves + [(location, direction) for direction in possible_moves_from(location)]
     return possible_moves
 
 
@@ -210,11 +216,11 @@ def make_move(location, direction):
     be in correct range."""
     moving_to = adjacent_location(location, direction)
     if at(location) == 'M':
-        board[moving_to[0]][moving_to[1]] = 'M'
-        board[location[0]][location[1]] = '_'
+        board[moving_to[0]][moving_to[1]] = 'M'  # piece appears in destination
+        board[location[0]][location[1]] = '_'  # former location now empty
     elif at(location) == 'R':
-        board[moving_to[0]][moving_to[1]] = 'R'
-        board[location[0]][location[1]] = '_'
+        board[moving_to[0]][moving_to[1]] = 'R'  # piece appears in destination
+        board[location[0]][location[1]] = '_'  # former location now empty
     else:
         raise ValueError("Given Location did not contain a piece")
 
