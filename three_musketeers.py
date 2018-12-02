@@ -148,7 +148,7 @@ def is_legal_move(location, direction):
     elif player == 'R':
         return is_legal_move_by_enemy(location, direction)
     else:
-        raise ValueError('Given location does not contain a Musketeer or an Enemy')
+        return False
 
 
 def can_move_piece_at(location):
