@@ -140,8 +140,6 @@ def test_is_legal_move():
     assert is_legal_move((3, 1), right) is True
     assert is_legal_move((1, 3), up) is False
     assert is_legal_move((1, 3), left) is True
-    with pytest.raises(ValueError):
-        is_legal_move((0, 0), right)
     assert is_legal_move((4, 3), down) is False
 
 def test_can_move_piece_at():
@@ -149,8 +147,6 @@ def test_can_move_piece_at():
     assert can_move_piece_at((0, 3)) is False
     assert can_move_piece_at((1, 3)) is True
     assert can_move_piece_at((1, 2)) is True
-    with pytest.raises(ValueError):
-        can_move_piece_at((0, 0))
 
 def test_has_some_legal_move_somewhere():
     set_board(board1)
