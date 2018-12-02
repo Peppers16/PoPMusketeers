@@ -267,7 +267,7 @@ def save_exists():
 
 def load_state():
     """Loads the saved file and returns the saved board. Assumes that the saved file exists"""
-    save_file = open("save_games/save_game.pickle", "r")
+    save_file = open("save_games/save_game.pickle", "rb")
     loaded_board = pickle.load(save_file)
     save_file.close()
     return loaded_board

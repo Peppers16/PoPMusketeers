@@ -249,8 +249,15 @@ def test_save_delete_exists():
     assert save_exists() == True
     delete_save()
     assert save_exists() == False
+    # currently save_games directory must before function is used. Suggest adding a 'create_save_directory' function
+    # in future iterations
 
 def test_load_state():
     set_board(board1)
     save_state(get_board())
     assert load_state() == board1
+
+def test_delete_state():
+    if save_exists():
+        delete_save()
+        assert not save_exists()
