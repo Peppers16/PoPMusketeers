@@ -13,6 +13,7 @@
 # 'pass' is a no-nothing Python statement. Replace it with actual code.
 
 from random import choice
+from copy import deepcopy
 
 # lookups for row in string_to_location and location_to_string functions
 row_to_num = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4}
@@ -36,7 +37,7 @@ def create_board():
 def set_board(new_board):
     """Replaces the global board with new_board."""
     global board
-    board = new_board
+    board = deepcopy(new_board)  # deep copy used for unit testing; wish to retain 'original' new_board
 
 
 def get_board():
@@ -53,6 +54,8 @@ def string_to_location(s):
        """
     # Supplied row (first character: letter) and column (second character: number) are checked separately.
     # This is because of how row uses a dictionary lookup
+    if len(s) != 2:
+        raise ValueError('Input must be two characters in length: Row (A-E) and Column (1-5)')
     try:
         row = row_to_num[s[0].upper()]
     except KeyError:
@@ -239,7 +242,15 @@ def choose_computer_move(who):
 
 def is_enemy_win():
     """Returns True if all 3 Musketeers are in the same row or column."""
-    return False
+    rows = set()
+    cols = set()
+    for location in all_locations():
+        if at(location) == 'M':
+            rows.add(location[0])
+            cols.add(location[1])
+    # if either rows or cols sets have a length of 1, this indicates that all musketeers shared the same row or column
+    # if true for either set, enemy has won
+    return len(rows) == 1 or len(cols) == 1
 
 
 # ---------- Communicating with the user ----------
