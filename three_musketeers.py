@@ -218,7 +218,6 @@ def make_move(location, direction):
     """Moves the piece in location in the indicated direction.
     Doesn't check if the move is legal. You can assume that input will always
     be in correct range."""
-    print(board)
     moving_to = adjacent_location(location, direction)
     if at(location) == 'M':
         board[moving_to[0]][moving_to[1]] = 'M'  # piece appears in destination
@@ -228,7 +227,6 @@ def make_move(location, direction):
         board[location[0]][location[1]] = '_'  # former location now empty
     else:
         raise ValueError("Given Location did not contain a piece")
-    print(board)
 
 
 def choose_computer_move(who):
