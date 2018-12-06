@@ -245,7 +245,7 @@ def test_is_enemy_win():
 
 def test_save_delete_exists():
     set_board(board1)
-    save_state(get_board())
+    save_state('M')
     assert save_exists() == True
     delete_save()
     assert save_exists() == False
@@ -254,8 +254,10 @@ def test_save_delete_exists():
 
 def test_load_state():
     set_board(board1)
-    save_state(get_board())
-    assert load_state() == board1
+    save_state('M')
+    set_board(board2)
+    load_state() # this should return board to board1
+    assert get_board() == board1
 
 def test_delete_state():
     if save_exists():

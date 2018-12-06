@@ -252,11 +252,12 @@ def is_enemy_win():
     return len(rows) == 1 or len(cols) == 1
 
 
-def save_state(board):
+def save_state(users_side):
     """Saves a Pickle file to save_games directory, which can be loaded to resume the game at a later time.
         The sub-directory 'save_game' must exist in the present directory, although it may be empty."""
     save_file = open("save_games/save_game.pickle", "wb")
     pickle.dump(board, save_file)
+    pickle.dump(users_side, save_file)
     save_file.close()
 
 
@@ -267,14 +268,32 @@ def save_exists():
 
 def load_state():
     """Loads the saved file and returns the saved board. Assumes that the saved file exists"""
+    global board  # in leu of create_board, we must define global board
     save_file = open("save_games/save_game.pickle", "rb")
-    loaded_board = pickle.load(save_file)
+    board = pickle.load(save_file)  # directly assign global variable
+    loaded_side = pickle.load(save_file)  # this will be returned by function
     save_file.close()
-    return loaded_board
+    return loaded_side
 
 def delete_save():
     """Removes the saved file. Assumes that the saved file exists"""
     os.remove("save_games/save_game.pickle")
+
+def user_requests_resume():
+    print()
+    print("""A previous game in progress was saved.
+Would you like to resume the game, or erase it and start a new game? \n\n""")
+    while True:  # input repeatedly requested until valid response given
+        res = input("R to resume save, N for new game: ")
+        # allow some flexibility with input
+        if res.upper() in ['R', 'RESUME']:
+            return True
+        elif res.upper() in ['N', 'NEW GAME', 'NEW', 'NEWGAME']:
+            return False
+
+# A QuitException will be raised by the 'get users move' function if the user requests 'SAVE'
+class QuitException(Exception):
+    pass
 
 # ---------- Communicating with the user ----------
 # ----you do not need to modify code below unless you find a bug
@@ -301,7 +320,9 @@ letter (A, B, C, D, or E) followed by an integer (1, 2, 3, 4, or 5).
 Directions are indicated as left, right, up, or down (or simply L, R,
 U, or D). For example, to move the Musketeer from the top right-hand
 corner to the row below, enter 'A5 left' (without quotes).
-For convenience in typing, you may use lowercase letters.""")
+For convenience in typing, you may use lowercase letters.
+
+To save your game for later: enter 'save' (without quotes) as your move""")
     print()
 
 
@@ -316,12 +337,15 @@ def choose_users_side():
     return user
 
 
-def get_users_move():
+def get_users_move(users_side):
     """Gets a legal move from the user, and returns it as a
        (location, direction) tuple."""
     directions = {'L': 'left', 'R': 'right', 'U': 'up', 'D': 'down'}
     move = input("Your move? ").upper().replace(' ', '')
-    if (len(move) >= 3
+    if move.upper() == 'SAVE':
+        save_state(users_side)
+        raise QuitException
+    elif (len(move) >= 3
             and move[0] in 'ABCDE'
             and move[1] in '12345'
             and move[2] in 'LRUD'):
@@ -330,14 +354,14 @@ def get_users_move():
         if is_legal_move(location, direction):
             return (location, direction)
     print("Illegal move--'" + move + "'")
-    return get_users_move()
+    return get_users_move(users_side)
 
 
 def move_musketeer(users_side):
     """Gets the Musketeer's move (from either the user or the computer)
        and makes it."""
     if users_side == 'M':
-        (location, direction) = get_users_move()
+        (location, direction) = get_users_move(users_side)
         if at(location) == 'M':
             if is_legal_move(location, direction):
                 make_move(location, direction)
@@ -355,7 +379,7 @@ def move_enemy(users_side):
     """Gets the enemy's move (from either the user or the computer)
        and makes it."""
     if users_side == 'R':
-        (location, direction) = get_users_move()
+        (location, direction) = get_users_move(users_side)
         if at(location) == 'R':
             if is_legal_move(location, direction):
                 make_move(location, direction)
@@ -378,15 +402,23 @@ def describe_move(who, location, direction):
           location_to_string(new_location) + ".\n")
 
 
+
 def start():
     """Plays the Three Musketeers Game."""
-    users_side = choose_users_side()
-    board = create_board()
+    # Check for existing save, and load its state if requested.
+    if save_exists() and user_requests_resume():
+        users_side = load_state()
+    else:  # Start fresh game
+        users_side = choose_users_side()
+        create_board()
+    if save_exists(): delete_save()
+    # Start/ resume game from this point
     print_instructions()
     print_board()
     while True:
         if has_some_legal_move_somewhere('M'):
-            board = move_musketeer(users_side)
+            try: move_musketeer(users_side)
+            except QuitException: return  # user requested 'SAVE' during their turn
             print_board()
             if is_enemy_win():
                 print("Cardinal Richleau's men win!")
@@ -395,7 +427,8 @@ def start():
             print("The Musketeers win!")
             break
         if has_some_legal_move_somewhere('R'):
-            board = move_enemy(users_side)
+            try: move_enemy(users_side)
+            except QuitException: return  # user requested 'SAVE' during their turn
             print_board()
         else:
             print("The Musketeers win!")
