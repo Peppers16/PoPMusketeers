@@ -267,7 +267,8 @@ def save_exists():
 
 
 def load_state():
-    """Loads the saved file and returns the saved board. Assumes that the saved file exists"""
+    """Loads the saved file and sets the board, as well as returning the player's side.
+        Assumes that the saved file exists"""
     global board  # in leu of create_board, we must define global board
     save_file = open("save_games/save_game.pickle", "rb")
     board = pickle.load(save_file)  # directly assign global variable
@@ -282,13 +283,13 @@ def delete_save():
 def user_requests_resume():
     print()
     print("""A previous game in progress was saved.
-Would you like to resume the game, or erase it and start a new game? \n\n""")
+Would you like to resume the game, or erase it and start a new game? \n""")
     while True:  # input repeatedly requested until valid response given
         res = input("R to resume save, N for new game: ")
         # allow some flexibility with input
-        if res.upper() in ['R', 'RESUME']:
+        if res.upper().replace(' ', '') in ['R', 'RESUME']:
             return True
-        elif res.upper() in ['N', 'NEW GAME', 'NEW', 'NEWGAME']:
+        elif res.upper().replace(' ', '') in ['N', 'NEW', 'NEWGAME']:
             return False
 
 # A QuitException will be raised by the 'get users move' function if the user requests 'SAVE'
@@ -342,7 +343,7 @@ def get_users_move(users_side):
        (location, direction) tuple."""
     directions = {'L': 'left', 'R': 'right', 'U': 'up', 'D': 'down'}
     move = input("Your move? ").upper().replace(' ', '')
-    if move.upper() == 'SAVE':
+    if move.upper().replace(' ', '') == 'SAVE':
         save_state(users_side)
         raise QuitException
     elif (len(move) >= 3
@@ -406,7 +407,7 @@ def start():
     """Plays the Three Musketeers Game."""
     # Check for existing save, and load its state if requested.
     if save_exists() and user_requests_resume():
-        users_side = load_state()
+        users_side = load_state()  # also sets global board
         if users_side == 'R':
             user_just_loaded_enemy = True
         else:
@@ -420,7 +421,7 @@ def start():
     print_instructions()
     print_board()
     while True:
-        # this branch skips to the enemy turn if the human player has just loaded a game where they were the enemy
+        # this if skips to the enemy turn if the human player has just loaded a game where they were the enemy
         if not user_just_loaded_enemy:
             if has_some_legal_move_somewhere('M'):
                 try: move_musketeer(users_side)
@@ -434,7 +435,7 @@ def start():
             else:
                 print("The Musketeers win!")
                 break
-        user_just_loaded_enemy = False
+        user_just_loaded_enemy = False  # bool only true if player has just been granted their resumed turn as enemy
         if has_some_legal_move_somewhere('R'):
             try: move_enemy(users_side)
             except QuitException:  # User requested a save and quit
