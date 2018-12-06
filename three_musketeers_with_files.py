@@ -402,33 +402,44 @@ def describe_move(who, location, direction):
           location_to_string(new_location) + ".\n")
 
 
-
 def start():
     """Plays the Three Musketeers Game."""
     # Check for existing save, and load its state if requested.
     if save_exists() and user_requests_resume():
         users_side = load_state()
+        if users_side == 'R':
+            user_just_loaded_enemy = True
+        else:
+            user_just_loaded_enemy = False
     else:  # Start fresh game
         users_side = choose_users_side()
         create_board()
+        user_just_loaded_enemy = False
     if save_exists(): delete_save()
-    # Start/ resume game from this point
+    # Setup complete. Prints instructions then begins main loop
     print_instructions()
     print_board()
     while True:
-        if has_some_legal_move_somewhere('M'):
-            try: move_musketeer(users_side)
-            except QuitException: return  # user requested 'SAVE' during their turn
-            print_board()
-            if is_enemy_win():
-                print("Cardinal Richleau's men win!")
+        # this branch skips to the enemy turn if the human player has just loaded a game where they were the enemy
+        if not user_just_loaded_enemy:
+            if has_some_legal_move_somewhere('M'):
+                try: move_musketeer(users_side)
+                except QuitException:  # User requested a save and quit
+                    print('Game saved for later...')
+                    return
+                print_board()
+                if is_enemy_win():
+                    print("Cardinal Richleau's men win!")
+                    break
+            else:
+                print("The Musketeers win!")
                 break
-        else:
-            print("The Musketeers win!")
-            break
+        user_just_loaded_enemy = False
         if has_some_legal_move_somewhere('R'):
             try: move_enemy(users_side)
-            except QuitException: return  # user requested 'SAVE' during their turn
+            except QuitException:  # User requested a save and quit
+                print('Game saved for later...')
+                return
             print_board()
         else:
             print("The Musketeers win!")
